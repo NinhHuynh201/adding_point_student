@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Điểm Phát Biểu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .login-box h2 {
+            color: #4a5568;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #4a5568;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 16px;
+        }
+
+        .main-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .main-btn {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .main-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .main-btn .icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .main-btn h3 {
+            color: #4a5568;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .main-btn p {
+            color: #718096;
+            font-size: 16px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .back-btn {
+            margin-bottom: 20px;
+        }
+
+        .groups-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .group-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .group-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .group-card h3 {
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .group-card .student-count {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .students-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .student-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .student-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .student-card h4 {
+            color: #4a5568;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .student-card .student-id {
+            color: #718096;
+            font-size: 12px;
+        }
+
+        .sessions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .session-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .session-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .results-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .history-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+        }
+
+        .history-item {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-info h4 {
+            color: #4a5568;
+            margin-bottom: 5px;
+        }
+
+        .history-info p {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .delete-btn {
+            background: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .delete-btn:hover {
+            background: #c53030;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card h3 {
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .score {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .error {
+            color: #e53e3e;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .success {
+            color: #38a169;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .main-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .groups-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sessions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-box">
+            <h2>🔐 Đăng Nhập Admin</h2>
+            <div class="input-group">
+                <label for="adminKey">Mã khóa admin:</label>
+                <input type="password" id="adminKey" placeholder="Nhập mã khóa...">
+            </div>
+            <button class="btn btn-primary" onclick="login()">Đăng Nhập</button>
+            <div id="loginError" class="error" style="display: none;">Mã khóa không đúng!</div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" style="display: none;">
+        <div class="container">
+            <!-- Home Page -->
+            <div id="homePage" class="page active">
+                <div class="header">
+                    <h1>🎓 Quản Lý Điểm Phát Biểu</h1>
+                    <p>Hệ thống theo dõi và khuyến khích phát biểu của học sinh</p>
+                </div>
+
+                <div class="main-buttons">
+                    <a href="#" class="main-btn" onclick="showPage('speakPage')">
+                        <div class="icon">🗣️</div>
+                        <h3>Phát Biểu</h3>
+                        <p>Cộng điểm cho học sinh phát biểu</p>
+                    </a>
+                    <a href="#" class="main-btn" onclick="showPage('resultsPage')">
+                        <div class="icon">📊</div>
+                        <h3>Kết Quả</h3>
+                        <p>Xem lịch sử và thống kê điểm</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Speak Page -->
+            <div id="speakPage" class="page">
+                <button class="btn btn-secondary back-btn" onclick="showPage('homePage')">← Về Trang Chủ</button>
+
+                <div id="groupSelection">
+                    <div class="header">
+                        <h1>Chọn Nhóm Phát Biểu</h1>
+                        <p>8 nhóm theo trái Thánh Linh</p>
+                    </div>
+                    <div class="groups-grid" id="groupsGrid"></div>
+                </div>
+
+                <div id="studentSelection" style="display: none;">
+                    <button class="btn btn-secondary" onclick="backToGroups()">← Chọn Lại Nhóm</button>
+                    <div class="header">
+                        <h1 id="selectedGroupTitle">Chọn Học Sinh</h1>
+                    </div>
+                    <div class="students-list" id="studentsList"></div>
+                </div>
+
+                <div id="sessionSelection" style="display: none;">
+                    <button class="btn btn-secondary" onclick="backToStudents()">← Chọn Lại Học Sinh</button>
+                    <div class="header">
+                        <h1>Chọn Buổi Học</h1>
+                        <p id="selectedStudentInfo"></p>
+                    </div>
+                    <div class="sessions-grid" id="sessionsGrid"></div>
+                </div>
+            </div>
+
+            <!-- Results Page -->
+            <div id="resultsPage" class="page">
+                <button class="btn btn-secondary back-btn" onclick="showPage('homePage')">← Về Trang Chủ</button>
+
+                <div id="historyView">
+                    <div class="results-container">
+                        <div class="results-header">
+                            <h2>📈 Lịch Sử Phát Biểu</h2>
+                            <button class="btn btn-primary" onclick="showGroupStats()">Thống Kê Theo Nhóm</button>
+                        </div>
+                        <div class="history-list" id="historyList"></div>
+                    </div>
+                </div>
+
+                <div id="statsView" style="display: none;">
+                    <div class="results-container">
+                        <div class="results-header">
+                            <h2>📊 Thống Kê Theo Nhóm</h2>
+                            <button class="btn btn-secondary" onclick="showHistory()">Xem Lịch Sử</button>
+                        </div>
+                        <div class="stats-grid" id="statsGrid"></div>
+                    </div>
+                </div>
+
+                <div id="groupDetailView" style="display: none;">
+                    <div class="results-container">
+                        <div class="results-header">
+                            <h2 id="groupDetailTitle">Chi Tiết Nhóm</h2>
+                            <button class="btn btn-secondary" onclick="showGroupStats()">← Về Thống Kê</button>
+                        </div>
+                        <div class="history-list" id="groupDetailList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data from CSV
+        const studentsData = [
+            { "name": "Nguyễn Thị Xuân Trang", "group": "Yêu Thương", "id": "001" },
+            { "name": "Võ Nguyên Anh Minh", "group": "Yêu Thương", "id": "002" },
+            { "name": "Lê Ngọc Linh Tuyền", "group": "Yêu Thương", "id": "003" },
+            { "name": "Chu Duy Thức", "group": "Yêu Thương", "id": "004" },
+            { "name": "Nguyễn Trung Tín", "group": "Yêu Thương", "id": "005" },
+            { "name": "Trần Thành Đạt", "group": "Yêu Thương", "id": "006" },
+            { "name": "Nguyễn Tấn Trung", "group": "Yêu Thương", "id": "007" },
+            { "name": "Huỳnh Ngọc Ánh Tuyết", "group": "Yêu Thương", "id": "008" },
+            { "name": "Trần Hoàng Quân", "group": "Yêu Thương", "id": "009" },
+            { "name": "Nguyễn Thiên Thi", "group": "Yêu Thương", "id": "010" },
+            { "name": "Nguyễn Cao Kỳ Duyên", "group": "Yêu Thương", "id": "011" },
+            { "name": "Trần Tấn Phúc", "group": "Yêu Thương", "id": "012" },
+            { "name": "Nguyễn Thị Minh Trang", "group": "Yêu Thương", "id": "013" },
+            { "name": "Đặng Thị Trúc Ngân", "group": "Yêu Thương", "id": "014" },
+            { "name": "Trần Thị Thiên Hằng", "group": "Yêu Thương", "id": "015" },
+            { "name": "Dương Huyền Ngự", "group": "Yêu Thương", "id": "016" },
+            { "name": "Trần Lâm Phương Nhi", "group": "Yêu Thương", "id": "017" },
+            { "name": "Võ Chí Đức", "group": "Yêu Thương", "id": "018" },
+            { "name": "Nguyễn Thị Như Linh", "group": "Yêu Thương", "id": "019" },
+            { "name": "Nguyễn Văn Tú Ân", "group": "Yêu Thương", "id": "020" },
+            { "name": "Phan Vĩnh Thiện Khôi", "group": "Yêu Thương", "id": "021" },
+            { "name": "Trần Thiên Ái", "group": "Yêu Thương", "id": "022" },
+            { "name": "Hồ Thị Thùy Dương", "group": "Vui Mừng", "id": "023" },
+            { "name": "Bùi Thị Thanh Nga", "group": "Vui Mừng", "id": "024" },
+            { "name": "Nguyễn Thị Thùy Linh", "group": "Vui Mừng", "id": "025" },
+            { "name": "Trương Kim Thanh", "group": "Vui Mừng", "id": "026" },
+            { "name": "Lâm Hồ Thúy Nhơn", "group": "Vui Mừng", "id": "027" },
+            { "name": "Diệp Khương Anh", "group": "Vui Mừng", "id": "028" },
+            { "name": "Nguyễn Thị Kim Ngân", "group": "Vui Mừng", "id": "029" },
+            { "name": "Lê Quỳnh Nhi", "group": "Vui Mừng", "id": "030" },
+            { "name": "Lê Khả Vy", "group": "Vui Mừng", "id": "031" },
+            { "name": "Phan Thị Quỳnh Giang", "group": "Vui Mừng", "id": "032" },
+            { "name": "Nguyễn Nam Trân", "group": "Vui Mừng", "id": "033" },
+            { "name": "Trần Hán Tài", "group": "Vui Mừng", "id": "034" },
+            { "name": "Galet Ênuôl", "group": "Vui Mừng", "id": "035" },
+            { "name": "Trần Ngọc Anh Thư", "group": "Vui Mừng", "id": "036" },
+            { "name": "Trương Đình Kỳ", "group": "Vui Mừng", "id": "037" },
+            { "name": "Nguyễn Ngọc Nhật Mai", "group": "Vui Mừng", "id": "038" },
+            { "name": "Ksor Sắc", "group": "Vui Mừng", "id": "039" },
+            { "name": "Nguyễn Thanh Hoà", "group": "Vui Mừng", "id": "040" },
+            { "name": "Phan Giảng Bình", "group": "Vui Mừng", "id": "041" },
+            { "name": "Huỳnh Nguyễn Bửu Ngọc", "group": "Vui Mừng", "id": "042" },
+            { "name": "Tô Đông Phong", "group": "Vui Mừng", "id": "043" },
+            { "name": "Lê Trần Nhạc Khuê", "group": "Vui Mừng", "id": "044" },
+            { "name": "Lê Phú Thịnh", "group": "Vui Mừng", "id": "045" },
+            { "name": "Nguyễn Thục Thiên Ân", "group": "Vui Mừng", "id": "046" },
+            { "name": "Nguyễn Minh Tiến", "group": "Vui Mừng", "id": "047" },
+            { "name": "Điểu Thị Sách", "group": "Vui Mừng", "id": "048" },
+            { "name": "Đặng Tiểu Hạo", "group": "Vui Mừng", "id": "049" },
+            { "name": "Đoàn Minh Thạch", "group": "Vui Mừng", "id": "050" },
+            { "name": "Nguyễn Thị Thuận Phục", "group": "Vui Mừng", "id": "051" },
+            { "name": "Phan Nguyễn Trâm Anh", "group": "Vui Mừng", "id": "052" },
+            { "name": "Thị Oanh", "group": "Vui Mừng", "id": "053" },
+            { "name": "Trương Đặng Linh Đăng", "group": "Bình An", "id": "054" },
+            { "name": "Huỳnh Xuân Hiền", "group": "Bình An", "id": "055" },
+            { "name": "Trần Phan Thu Ngân", "group": "Bình An", "id": "056" },
+            { "name": "Nguyễn Đăng Huy", "group": "Bình An", "id": "057" },
+            { "name": "Trần Thị Mỹ Lộc", "group": "Bình An", "id": "058" },
+            { "name": "Nguyễn Thiện Nhân", "group": "Bình An", "id": "059" },
+            { "name": "Đặng Hoàng Ý Nhi", "group": "Bình An", "id": "060" },
+            { "name": "Nguyễn Đình Cao Sang", "group": "Bình An", "id": "061" },
+            { "name": "Phạm Linh Đan", "group": "Bình An", "id": "062" },
+            { "name": "Lê Minh Khoa", "group": "Bình An", "id": "063" },
+            { "name": "Phạm Nguyễn Nguyên Khôi", "group": "Bình An", "id": "064" },
+            { "name": "Ông Thị Thục Hồng", "group": "Bình An", "id": "065" },
+            { "name": "H Xuân Êban", "group": "Bình An", "id": "066" },
+            { "name": "Đoàn Đại Ngữ", "group": "Bình An", "id": "067" },
+            { "name": "Trần Công Bình", "group": "Bình An", "id": "068" },
+            { "name": "Tô Phương Thảo", "group": "Bình An", "id": "069" },
+            { "name": "Nguyễn Trần Thy Thy", "group": "Bình An", "id": "070" },
+            { "name": "Dương Phạm Ngọc Châu", "group": "Bình An", "id": "071" },
+            { "name": "Lê Minh Đức", "group": "Bình An", "id": "072" },
+            { "name": "Nguyễn Hà Nam Trân", "group": "Bình An", "id": "073" },
+            { "name": "Nguyễn Trần Khánh Linh", "group": "Bình An", "id": "074" },
+            { "name": "Đặng Hồ Nhật Khánh", "group": "Bình An", "id": "075" },
+            { "name": "Huỳnh Vĩnh Hằng", "group": "Bình An", "id": "076" },
+            { "name": "Lâm Mai Trang", "group": "Nhịn Nhục", "id": "077" },
+            { "name": "Trần Lê Minh Tướng", "group": "Nhịn Nhục", "id": "078" },
+            { "name": "Đỗ Ngọc Hân", "group": "Nhịn Nhục", "id": "079" },
+            { "name": "Nguyễn Hoàng Anh Thư", "group": "Nhịn Nhục", "id": "080" },
+            { "name": "Đặng Hoàng Anh", "group": "Nhịn Nhục", "id": "081" },
+            { "name": "Cao Nguyễn Anh Thư", "group": "Nhịn Nhục", "id": "082" },
+            { "name": "Lê Vĩnh Toàn", "group": "Nhịn Nhục", "id": "083" },
+            { "name": "Âu Gia Thịnh", "group": "Nhịn Nhục", "id": "084" },
+            { "name": "Phạm Nguyễn Hoàng Tân", "group": "Nhịn Nhục", "id": "085" },
+            { "name": "Long Minh Tâm", "group": "Nhịn Nhục", "id": "086" },
+            { "name": "Tạ Lâm Tuyết Nhung", "group": "Nhịn Nhục", "id": "087" },
+            { "name": "Phan Nguyễn Vân Anh", "group": "Nhịn Nhục", "id": "088" },
+            { "name": "Nguyễn Hoàng Vân Anh", "group": "Nhịn Nhục", "id": "089" },
+            { "name": "Phạm Duy Thành", "group": "Nhịn Nhục", "id": "090" },
+            { "name": "Trần Thị Nhật Lệ", "group": "Nhịn Nhục", "id": "091" },
+            { "name": "Lê Huỳnh Trường Hải", "group": "Nhịn Nhục", "id": "092" },
+            { "name": "Trịnh Thành Danh", "group": "Nhịn Nhục", "id": "093" },
+            { "name": "Đặng Thị Xuân Hoà", "group": "Nhịn Nhục", "id": "094" },
+            { "name": "Trương Minh Triết", "group": "Nhịn Nhục", "id": "095" },
+            { "name": "Lê Văn Tài", "group": "Nhịn Nhục", "id": "096" },
+            { "name": "Lê Ngọc Bảo Trân", "group": "Nhịn Nhục", "id": "097" },
+            { "name": "Nguyễn Quang Hảo", "group": "Nhịn Nhục", "id": "098" },
+            { "name": "Trần Thuý Nga", "group": "Nhịn Nhục", "id": "099" },
+            { "name": "Đào Huyền Trân", "group": "Nhịn Nhục", "id": "100" },
+            { "name": "Lê Nhật Quang", "group": "Nhịn Nhục", "id": "101" },
+            { "name": "Trần Ngọc Nhã Thy", "group": "Nhịn Nhục", "id": "102" },
+            { "name": "Trần Bích Duyên", "group": "Nhịn Nhục", "id": "103" },
+            { "name": "Lương Hoàng An Nhật", "group": "Nhịn Nhục", "id": "104" },
+            { "name": "Nguyễn Thanh Vân", "group": "Nhân Từ", "id": "105" },
+            { "name": "Giang Hoàng Cao Quí", "group": "Nhân Từ", "id": "106" },
+            { "name": "H Joy Kbuôr", "group": "Nhân Từ", "id": "107" },
+            { "name": "Trần Thanh Phong", "group": "Nhân Từ", "id": "108" },
+            { "name": "Ôn Thành Long", "group": "Nhân Từ", "id": "109" },
+            { "name": "Lê Hải Yến", "group": "Nhân Từ", "id": "110" },
+            { "name": "Đỗ Cẩm Nguyên", "group": "Nhân Từ", "id": "111" },
+            { "name": "H Ôni Niê Siêng", "group": "Nhân Từ", "id": "112" },
+            { "name": "Nguyễn Thị Châu Quỳnh", "group": "Nhân Từ", "id": "113" },
+            { "name": "Nguyễn Tấn Hậu", "group": "Nhân Từ", "id": "114" },
+            { "name": "Dương Ngọc Quí", "group": "Nhân Từ", "id": "115" },
+            { "name": "Nguyễn Trương Hoàng Hân", "group": "Nhân Từ", "id": "116" },
+            { "name": "Lê Thị Ngọc Hân", "group": "Nhân Từ", "id": "117" },
+            { "name": "Nguyễn Thiên Ân", "group": "Nhân Từ", "id": "118" },
+            { "name": "Lưu Mỹ Nguyên", "group": "Nhân Từ", "id": "119" },
+            { "name": "Lê Hoàng Khang", "group": "Nhân Từ", "id": "120" },
+            { "name": "Nguyễn Song Thiên Phúc", "group": "Nhân Từ", "id": "121" },
+            { "name": "Đinh Trí Thiên Bảo", "group": "Nhân Từ", "id": "122" },
+            { "name": "Lương Tường Vy", "group": "Nhân Từ", "id": "123" },
+            { "name": "Lương Đức Minh", "group": "Hiền Lành", "id": "124" },
+            { "name": "Lê Ngọc Ái Linh", "group": "Hiền Lành", "id": "125" },
+            { "name": "Nguyễn Sĩ Nhân", "group": "Hiền Lành", "id": "126" },
+            { "name": "Nguyễn Hồng Chương", "group": "Hiền Lành", "id": "127" },
+            { "name": "Phạm Bá Nam", "group": "Hiền Lành", "id": "128" },
+            { "name": "Nguyễn Ngọc Gia Hân", "group": "Hiền Lành", "id": "129" },
+            { "name": "Đoàn Lê Yến Phương", "group": "Hiền Lành", "id": "130" },
+            { "name": "Ngô Phụng Tiên", "group": "Hiền Lành", "id": "131" },
+            { "name": "Vương Vĩnh Thái", "group": "Hiền Lành", "id": "132" },
+            { "name": "Nguyễn Thị Phương Thanh", "group": "Hiền Lành", "id": "133" },
+            { "name": "Võ Nhật Duy", "group": "Hiền Lành", "id": "134" },
+            { "name": "Phạm Phát Đạt", "group": "Hiền Lành", "id": "135" },
+            { "name": "Phan An Thịnh", "group": "Hiền Lành", "id": "136" },
+            { "name": "Nguyễn Thị Hoàng Diệu", "group": "Hiền Lành", "id": "137" },
+            { "name": "Nguyễn Ngô Hoàng Huy", "group": "Hiền Lành", "id": "138" },
+            { "name": "Trần Lê Phương Nhã", "group": "Hiền Lành", "id": "139" },
+            { "name": "Nguyễn Thị Kim Ngân", "group": "Hiền Lành", "id": "140" },
+            { "name": "Nguyễn Hoàng An Khang", "group": "Hiền Lành", "id": "141" },
+            { "name": "Nguyễn Hằng Hương Giang", "group": "Hiền Lành", "id": "142" },
+            { "name": "Trương Ngọc Linh", "group": "Trung Tín", "id": "143" },
+            { "name": "Nguyễn Ngọc Bảo Nghi", "group": "Trung Tín", "id": "144" },
+            { "name": "Nguyễn Minh Việt", "group": "Trung Tín", "id": "145" },
+            { "name": "H Nhan Ktla", "group": "Trung Tín", "id": "146" },
+            { "name": "Phạm Đoàn Tố Trân", "group": "Trung Tín", "id": "147" },
+            { "name": "Phạm Lê Bảo Ngọc", "group": "Trung Tín", "id": "148" },
+            { "name": "Nguyễn Thanh Vân", "group": "Trung Tín", "id": "149" },
+            { "name": "Huỳnh Khương Ninh", "group": "Trung Tín", "id": "150" },
+            { "name": "Lê Bảo Thiên Ân", "group": "Trung Tín", "id": "151" },
+            { "name": "Hà Phúc Thiên", "group": "Trung Tín", "id": "152" },
+            { "name": "Phạm Duy", "group": "Trung Tín", "id": "153" },
+            { "name": "Trương Ngọc Mỹ", "group": "Trung Tín", "id": "154" },
+            { "name": "Võ Tiến Cường", "group": "Trung Tín", "id": "155" },
+            { "name": "Trịnh Ngọc Thiên Phú", "group": "Trung Tín", "id": "156" },
+            { "name": "Nguyễn Triệu Ân", "group": "Trung Tín", "id": "157" },
+            { "name": "Đoàn Gia Kiệt", "group": "Trung Tín", "id": "158" },
+            { "name": "Trương Quỳnh My", "group": "Trung Tín", "id": "159" },
+            { "name": "Trần Quang", "group": "Trung Tín", "id": "160" },
+            { "name": "Nguyễn Phạm Phương Thảo", "group": "Trung Tín", "id": "161" },
+            { "name": "Võ Văn Đầy", "group": "Mềm Mại", "id": "162" },
+            { "name": "Nguyễn Phạm Thanh Phương", "group": "Mềm Mại", "id": "163" },
+            { "name": "Ngô Tấn Phát", "group": "Mềm Mại", "id": "164" },
+            { "name": "Nguyễn Cao Đại", "group": "Mềm Mại", "id": "165" },
+            { "name": "Lê Thị Thuỳ Dương", "group": "Mềm Mại", "id": "166" },
+            { "name": "Huỳnh Thị Yến Linh", "group": "Mềm Mại", "id": "167" },
+            { "name": "Nguyễn Hoàng Anh", "group": "Mềm Mại", "id": "168" },
+            { "name": "Nguyễn Thị Hồng Trâm", "group": "Mềm Mại", "id": "169" },
+            { "name": "Võ Thị Mỹ Duyên", "group": "Mềm Mại", "id": "170" },
+            { "name": "Trần Hữu Phúc", "group": "Mềm Mại", "id": "171" },
+            { "name": "Huỳnh Ngọc Tâm Anh", "group": "Mềm Mại", "id": "172" },
+            { "name": "Trương Vĩnh Phúc", "group": "Mềm Mại", "id": "173" },
+            { "name": "Trần Thị Ngọc Thảo", "group": "Mềm Mại", "id": "174" },
+            { "name": "Đặng Gia Huy", "group": "Mềm Mại", "id": "175" },
+            { "name": "Trương Nguyễn Thiên Ý", "group": "Mềm Mại", "id": "176" },
+            { "name": "Nguyễn Thanh Thảo Vi", "group": "Mềm Mại", "id": "177" },
+            { "name": "Trương Kim Nguyệt", "group": "Mềm Mại", "id": "178" },
+            { "name": "Nguyễn Tuấn Vũ", "group": "Mềm Mại", "id": "179" },
+            { "name": "Huỳnh Anh Thái Ngọc", "group": "Mềm Mại", "id": "180" },
+            { "name": "Văn Trung", "group": "Mềm Mại", "id": "181" },
+            { "name": "Bùi Trương Huỳnh Duyên", "group": "Mềm Mại", "id": "182" },
+            { "name": "Trần Thị Tú Uyên", "group": "Mềm Mại", "id": "183" },
+            { "name": "Phạm Hoàng Lên", "group": "Mềm Mại", "id": "184" },
+            { "name": "Hoel Nie", "group": "Mềm Mại", "id": "185" }
+        ];
+
+        // Admin key (in real app, this should be more secure)
+        const ADMIN_KEY = "admin2024";
+
+        // Global variables
+        let selectedGroup = null;
+        let selectedStudent = null;
+        let speechHistory = JSON.parse(localStorage.getItem('speechHistory') || '[]');
+
+        // Group students by group name
+        const groupedStudents = studentsData.reduce((acc, student) => {
+            if (!acc[student.group]) {
+                acc[student.group] = [];
+            }
+            acc[student.group].push(student);
+            return acc;
+        }, {});
+
+        // Login function
+        function login() {
+            const key = document.getElementById('adminKey').value;
+            if (key === ADMIN_KEY) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                loadGroupsGrid();
+                updateHistory();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+
+        // Page navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+
+            if (pageId === 'resultsPage') {
+                updateHistory();
+                showHistory();
+            }
+        }
+
+        // Load groups grid
+        function loadGroupsGrid() {
+            const groupsGrid = document.getElementById('groupsGrid');
+            groupsGrid.innerHTML = '';
+
+            Object.keys(groupedStudents).forEach(groupName => {
+                const groupCard = document.createElement('div');
+                groupCard.className = 'group-card';
+                groupCard.onclick = () => selectGroup(groupName);
+
+                const studentCount = groupedStudents[groupName].length;
+                groupCard.innerHTML = `
+                    <h3>${groupName}</h3>
+                    <div class="student-count">${studentCount} học sinh</div>
+                `;
+
+                groupsGrid.appendChild(groupCard);
+            });
+        }
+
+        // Select group
+        function selectGroup(groupName) {
+            selectedGroup = groupName;
+            document.getElementById('selectedGroupTitle').textContent = `Nhóm ${groupName}`;
+
+            const studentsList = document.getElementById('studentsList');
+            studentsList.innerHTML = '';
+
+            groupedStudents[groupName].forEach(student => {
+                const studentCard = document.createElement('div');
+                studentCard.className = 'student-card';
+                studentCard.onclick = () => selectStudent(student);
+
+                studentCard.innerHTML = `
+                    <h4>${student.name}</h4>
+                    <div class="student-id">ID: ${student.id}</div>
+                `;
+
+                studentsList.appendChild(studentCard);
+            });
+
+            document.getElementById('groupSelection').style.display = 'none';
+            document.getElementById('studentSelection').style.display = 'block';
+        }
+
+        // Select student
+        function selectStudent(student) {
+            selectedStudent = student;
+            document.getElementById('selectedStudentInfo').textContent =
+                `${student.name} - Nhóm ${student.group} (ID: ${student.id})`;
+
+            const sessionsGrid = document.getElementById('sessionsGrid');
+            sessionsGrid.innerHTML = '';
+
+            for (let i = 1; i <= 9; i++) {
+                const sessionCard = document.createElement('div');
+                sessionCard.className = 'session-card';
+                sessionCard.onclick = () => addSpeechRecord(i);
+
+                sessionCard.innerHTML = `
+                    <h3>Buổi ${i}</h3>
+                `;
+
+                sessionsGrid.appendChild(sessionCard);
+            }
+
+            document.getElementById('studentSelection').style.display = 'none';
+            document.getElementById('sessionSelection').style.display = 'block';
+        }
+
+        // Add speech record
+        function addSpeechRecord(session) {
+            const record = {
+                id: Date.now(),
+                studentName: selectedStudent.name,
+                studentId: selectedStudent.id,
+                groupName: selectedStudent.group,
+                session: session,
+                timestamp: new Date().toLocaleString('vi-VN')
+            };
+
+            speechHistory.unshift(record);
+            localStorage.setItem('speechHistory', JSON.stringify(speechHistory));
+
+            // Reset selections and go back to home
+            selectedGroup = null;
+            selectedStudent = null;
+            backToGroups();
+            showPage('homePage');
+
+            // Show success message
+            alert(`✅ Đã cộng điểm cho ${record.studentName} - Buổi ${session}!`);
+        }
+
+        // Navigation functions
+        function backToGroups() {
+            document.getElementById('groupSelection').style.display = 'block';
+            document.getElementById('studentSelection').style.display = 'none';
+            document.getElementById('sessionSelection').style.display = 'none';
+        }
+
+        function backToStudents() {
+            document.getElementById('studentSelection').style.display = 'block';
+            document.getElementById('sessionSelection').style.display = 'none';
+        }
+
+        // Update history display
+        function updateHistory() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+
+            if (speechHistory.length === 0) {
+                historyList.innerHTML = '<div style="text-align: center; padding: 40px; color: #718096;">Chưa có lịch sử phát biểu</div>';
+                return;
+            }
+
+            speechHistory.forEach(record => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+
+                historyItem.innerHTML = `
+                    <div class="history-info">
+                        <h4>${record.studentName} (${record.studentId})</h4>
+                        <p>Nhóm: ${record.groupName} | Buổi: ${record.session} | ${record.timestamp}</p>
+                    </div>
+                    <button class="delete-btn" onclick="deleteRecord(${record.id})">❌</button>
+                `;
+
+                historyList.appendChild(historyItem);
+            });
+        }
+
+        // Delete record
+        function deleteRecord(recordId) {
+            if (confirm('Bạn có chắc muốn xóa bản ghi này?')) {
+                speechHistory = speechHistory.filter(record => record.id !== recordId);
+                localStorage.setItem('speechHistory', JSON.stringify(speechHistory));
+                updateHistory();
+                updateGroupStats();
+            }
+        }
+
+        // Show group statistics
+        function showGroupStats() {
+            document.getElementById('historyView').style.display = 'none';
+            document.getElementById('statsView').style.display = 'block';
+            document.getElementById('groupDetailView').style.display = 'none';
+            updateGroupStats();
+        }
+
+        // Show history
+        function showHistory() {
+            document.getElementById('historyView').style.display = 'block';
+            document.getElementById('statsView').style.display = 'none';
+            document.getElementById('groupDetailView').style.display = 'none';
+            updateHistory();
+        }
+
+        // Update group statistics
+        function updateGroupStats() {
+            const statsGrid = document.getElementById('statsGrid');
+            statsGrid.innerHTML = '';
+
+            // Count scores by group
+            const groupScores = {};
+            Object.keys(groupedStudents).forEach(groupName => {
+                groupScores[groupName] = speechHistory.filter(record => record.groupName === groupName).length;
+            });
+
+            // Create stat cards
+            Object.keys(groupedStudents).forEach(groupName => {
+                const statCard = document.createElement('div');
+                statCard.className = 'stat-card';
+                statCard.onclick = () => showGroupDetail(groupName);
+
+                statCard.innerHTML = `
+                    <h3>${groupName}</h3>
+                    <div class="score">${groupScores[groupName] || 0}</div>
+                    <p>điểm</p>
+                `;
+
+                statsGrid.appendChild(statCard);
+            });
+        }
+
+        // Show group detail
+        function showGroupDetail(groupName) {
+            document.getElementById('statsView').style.display = 'none';
+            document.getElementById('groupDetailView').style.display = 'block';
+            document.getElementById('groupDetailTitle').textContent = `Chi Tiết Nhóm ${groupName}`;
+
+            const groupDetailList = document.getElementById('groupDetailList');
+            groupDetailList.innerHTML = '';
+
+            const groupRecords = speechHistory.filter(record => record.groupName === groupName);
+
+            if (groupRecords.length === 0) {
+                groupDetailList.innerHTML = '<div style="text-align: center; padding: 40px; color: #718096;">Nhóm này chưa có lịch sử phát biểu</div>';
+                return;
+            }
+
+            groupRecords.forEach(record => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+
+                historyItem.innerHTML = `
+                    <div class="history-info">
+                        <h4>${record.studentName} (${record.studentId})</h4>
+                        <p>Buổi: ${record.session} | ${record.timestamp}</p>
+                    </div>
+                    <button class="delete-btn" onclick="deleteRecord(${record.id})">❌</button>
+                `;
+
+                groupDetailList.appendChild(historyItem);
+            });
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            // Focus on login input
+            document.getElementById('adminKey').focus();
+
+            // Allow enter key to login
+            document.getElementById('adminKey').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    login();
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
