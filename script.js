@@ -82,9 +82,10 @@ async function loadSpeechHistory() {
         const { data, error } = await supabaseClient
             .from('speech_history')
             .select(`
-                        *,
-                        admin_users!inner(username)
-                    `)
+                *,
+                admin_users!inner(username)
+            `)
+            .eq('admin_id', currentAdmin.id) // 🔥 Lọc theo admin đang đăng nhập
             .order('created_at', { ascending: false });
 
         if (error) throw error;
@@ -102,10 +103,10 @@ async function loadSpeechHistory() {
         updateHistory();
     } catch (error) {
         console.error('Error loading speech history:', error);
-        // Fallback to empty array if error
         speechHistory = [];
     }
 }
+
 
 async function addSpeechRecord(session) {
     try {
@@ -320,27 +321,30 @@ function updateGroupStats() {
     const statsGrid = document.getElementById('statsGrid');
     statsGrid.innerHTML = '';
 
-    // Count scores by group
+    // Đếm điểm theo nhóm (chỉ điểm của admin hiện tại)
     const groupScores = {};
     Object.keys(groupedStudents).forEach(groupName => {
-        groupScores[groupName] = speechHistory.filter(record => record.groupName === groupName).length;
+        groupScores[groupName] = speechHistory.filter(record =>
+            record.groupName === groupName &&
+            record.adminName === currentAdmin.username
+        ).length;
     });
 
-    // Create stat cards
     Object.keys(groupedStudents).forEach(groupName => {
         const statCard = document.createElement('div');
         statCard.className = 'stat-card';
         statCard.onclick = () => showGroupDetail(groupName);
 
         statCard.innerHTML = `
-                    <h3>${groupName}</h3>
-                    <div class="score">${groupScores[groupName] || 0}</div>
-                    <p>điểm</p>
-                `;
+            <h3>${groupName}</h3>
+            <div class="score">${groupScores[groupName] || 0}</div>
+            <p>điểm</p>
+        `;
 
         statsGrid.appendChild(statCard);
     });
 }
+
 
 function showGroupDetail(groupName) {
     document.getElementById('statsView').style.display = 'none';
