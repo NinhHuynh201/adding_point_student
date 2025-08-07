@@ -188,7 +188,7 @@ const studentsData = [
 ];
 
 // Admin key (in real app, this should be more secure)
-const ADMIN_KEY = "thuctinh2025";
+const ADMIN_KEY = "jkl";
 
 // Group students by group name
 const groupedStudents = studentsData.reduce((acc, student) => {
