@@ -1,3 +1,12 @@
+// Viewport Height
+function setViewportHeight() {
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
+setViewportHeight();
+window.addEventListener('resize', setViewportHeight);
+
 // Global variables
 let selectedGroup = null;
 let selectedStudent = null;
@@ -47,6 +56,12 @@ function loadGroupsGrid() {
 
         groupsGrid.appendChild(groupCard);
     });
+
+    // ✅ Cập nhật lại viewport height chính xác
+    setViewportHeight();
+
+    // ✅ Scroll về top (xử lý lỗi bị trôi)
+    window.scrollTo(0, 0);
 }
 
 // Select group
@@ -159,6 +174,12 @@ function updateHistory() {
 
         historyList.appendChild(historyItem);
     });
+
+    // ✅ Cập nhật lại viewport height chính xác
+    setViewportHeight();
+
+    // ✅ Scroll về top (xử lý lỗi bị trôi)
+    window.scrollTo(0, 0);
 }
 
 // Delete record
@@ -185,6 +206,12 @@ function showHistory() {
     document.getElementById('statsView').style.display = 'none';
     document.getElementById('groupDetailView').style.display = 'none';
     updateHistory();
+
+    // ✅ Cập nhật lại viewport height chính xác
+    setViewportHeight();
+
+    // ✅ Scroll về top (xử lý lỗi bị trôi)
+    window.scrollTo(0, 0);
 }
 
 // Update group statistics
