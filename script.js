@@ -174,12 +174,6 @@ function updateHistory() {
 
         historyList.appendChild(historyItem);
     });
-
-    // ✅ Cập nhật lại viewport height chính xác
-    setViewportHeight();
-
-    // ✅ Scroll về top (xử lý lỗi bị trôi)
-    window.scrollTo(0, 0);
 }
 
 // Delete record
