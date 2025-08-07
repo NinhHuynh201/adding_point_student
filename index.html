@@ -9,6 +9,9 @@
 </head>
 
 <body>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.35.7/dist/umd/supabase.min.js"></script>
+
     <!-- Login Screen -->
     <div id="loginScreen" class="login-screen">
         <div class="login-box">
@@ -19,13 +22,14 @@
             </div>
             <button class="btn btn-primary" onclick="login()">Đăng Nhập</button>
             <div id="loginError" class="error" style="display: none;">Mã khóa không đúng!</div>
+            <div id="loginLoading" style="display: none; color: #3182ce; margin-top: 10px;">Đang kiểm tra...</div>
         </div>
     </div>
 
     <!-- Main App -->
     <div id="mainApp" style="display: none;">
         <div class="container">
-            
+
             <!-- Home Page -->
             <div id="homePage" class="page active">
                 <div class="header">
@@ -113,11 +117,14 @@
             </div>
 
         </div>
+        <p id="adminInfo" style="text-align: center; font-weight: bold; margin-bottom: 10px;"></p>
     </div>
 
+    
     <script src="data.js"></script>
     <script src="script.js"></script>
     
+
 </body>
 
 </html>
