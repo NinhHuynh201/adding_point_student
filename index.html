@@ -9,7 +9,6 @@
 </head>
 
 <body>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.35.7/dist/umd/supabase.min.js"></script>
 
     <!-- Login Screen -->
@@ -61,6 +60,38 @@
                         <p>8 nhóm theo trái Thánh Linh</p>
                     </div>
                     <div class="groups-grid" id="groupsGrid"></div>
+
+                    <!-- Customize Positions Button -->
+                    <div class="customize-btn-container">
+                        <button class="customize-positions-btn" onclick="showPositionSelector()">
+                            🎯 Tuỳ chọn vị trí các nhóm
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Position Selector -->
+                <div id="positionSelector" style="display: none;">
+                    <button class="btn btn-secondary" onclick="hidePositionSelector()">← Quay Lại</button>
+                    <div class="position-selector">
+                        <div class="header">
+                            <h1>🎯 Sắp Xếp Vị Trí Nhóm</h1>
+                            <p>Chọn vị trí cho từng nhóm theo sơ đồ lớp học</p>
+                        </div>
+
+                        <div class="position-grid" id="positionGrid"></div>
+
+                        <div id="groupSelectorContainer" style="display: none;">
+                            <h3 style="text-align: center; margin-bottom: 15px; color: #4a5568;">
+                                Chọn nhóm cho vị trí <span id="selectedPositionLabel"></span>
+                            </h3>
+                            <div class="group-selector" id="groupSelector"></div>
+                        </div>
+
+                        <div class="save-positions-container">
+                            <button class="save-positions-btn" onclick="saveGroupPositions()">💾 Lưu Cấu Hình</button>
+                            <button class="cancel-positions-btn" onclick="resetPositions()">🔄 Đặt Lại</button>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="studentSelection" style="display: none;">
@@ -120,10 +151,9 @@
         <p id="adminInfo" style="text-align: center; font-weight: bold; margin-bottom: 10px;"></p>
     </div>
 
-    
     <script src="data.js"></script>
     <script src="script.js"></script>
-    
+
 
 </body>
 

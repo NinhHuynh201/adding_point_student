@@ -1,4 +1,3 @@
-
 // Viewport Height
 function setViewportHeight() {
     const vh = window.innerHeight * 0.01;
@@ -13,6 +12,8 @@ let selectedGroup = null;
 let selectedStudent = null;
 let currentAdmin = null;
 let speechHistory = [];
+let groupPositions = {}; // Lưu vị trí các nhóm
+let selectedPositionIndex = null;
 
 // Supabase
 const SUPABASE_URL = 'https://zhpyxxynfgzarbxmkscf.supabase.co';
@@ -64,6 +65,8 @@ async function login() {
         // Update admin info
         document.getElementById('adminInfo').textContent = `Đăng nhập: ${data.username}`;
 
+        // Load data
+        await loadGroupPositions();
         loadGroupsGrid();
         await loadSpeechHistory();
 
@@ -73,6 +76,202 @@ async function login() {
         loginError.style.display = 'block';
     } finally {
         loginLoading.style.display = 'none';
+    }
+}
+
+// ======================== GROUP POSITIONS MANAGEMENT ========================
+async function loadGroupPositions() {
+    try {
+        const { data, error } = await supabaseClient
+            .from('group_positions')
+            .select('*')
+            .single();
+
+        if (data && data.positions) {
+            groupPositions = data.positions;
+        } else {
+            // Default positions if no configuration exists
+            groupPositions = {
+                '0': 'Yêu Thương',
+                '1': 'Vui Mừng',
+                '2': 'Bình An',
+                '3': 'Nhịn Nhục',
+                '4': 'Nhân Từ',
+                '5': 'Hiền Lành',
+                '6': 'Trung Tín',
+                '7': 'Mềm Mại'
+            };
+        }
+    } catch (error) {
+        console.error('Error loading group positions:', error);
+        // Use default positions
+        groupPositions = {
+            '0': 'Yêu Thương',
+            '1': 'Vui Mừng',
+            '2': 'Bình An',
+            '3': 'Nhịn Nhục',
+            '4': 'Nhân Từ',
+            '5': 'Hiền Lành',
+            '6': 'Trung Tín',
+            '7': 'Mềm Mại'
+        };
+    }
+}
+
+async function saveGroupPositions() {
+    try {
+        // Check if record exists
+        const { data: existing, error: fetchError } = await supabaseClient
+            .from('group_positions')
+            .select('id')
+            .single();
+
+        if (existing) {
+            // Update existing record
+            const { error: updateError } = await supabaseClient
+                .from('group_positions')
+                .update({ positions: groupPositions })
+                .eq('id', existing.id);
+            
+            if (updateError) throw updateError;
+        } else {
+            // Insert new record
+            const { error: insertError } = await supabaseClient
+                .from('group_positions')
+                .insert({ positions: groupPositions });
+            
+            if (insertError) throw insertError;
+        }
+
+        hidePositionSelector();
+        loadGroupsGrid();
+        alert('✅ Đã lưu cấu hình vị trí nhóm thành công!');
+
+    } catch (error) {
+        console.error('Error saving group positions:', error);
+        alert('❌ Có lỗi xảy ra khi lưu cấu hình. Vui lòng thử lại!');
+    }
+}
+
+function showPositionSelector() {
+    document.getElementById('groupSelection').style.display = 'none';
+    document.getElementById('positionSelector').style.display = 'block';
+    loadPositionGrid();
+}
+
+function hidePositionSelector() {
+    document.getElementById('positionSelector').style.display = 'none';
+    document.getElementById('groupSelection').style.display = 'block';
+    document.getElementById('groupSelectorContainer').style.display = 'none';
+    selectedPositionIndex = null;
+}
+
+function loadPositionGrid() {
+    const positionGrid = document.getElementById('positionGrid');
+    positionGrid.innerHTML = '';
+
+    // Create 8 position slots (4 rows x 2 columns)
+    for (let i = 0; i < 8; i++) {
+        const positionSlot = document.createElement('div');
+        positionSlot.className = 'position-slot';
+        positionSlot.onclick = () => selectPosition(i);
+
+        const positionLabel = `Vị trí ${i + 1}`;
+        const groupName = groupPositions[i] || null;
+
+        if (groupName) {
+            positionSlot.classList.add('filled');
+            positionSlot.innerHTML = `
+                <div class="position-label">${positionLabel}</div>
+                <div class="group-name">${groupName}</div>
+            `;
+        } else {
+            positionSlot.innerHTML = `
+                <div class="position-label">${positionLabel}</div>
+                <div class="empty-text">Chọn nhóm</div>
+            `;
+        }
+
+        positionGrid.appendChild(positionSlot);
+    }
+}
+
+function selectPosition(positionIndex) {
+    selectedPositionIndex = positionIndex;
+    document.getElementById('selectedPositionLabel').textContent = `${positionIndex + 1}`;
+    
+    // Show group selector
+    document.getElementById('groupSelectorContainer').style.display = 'block';
+    loadGroupSelector();
+}
+
+function loadGroupSelector() {
+    const groupSelector = document.getElementById('groupSelector');
+    groupSelector.innerHTML = '';
+
+    // Get all group names
+    const allGroups = Object.keys(groupedStudents);
+    
+    // Get already assigned groups
+    const assignedGroups = Object.values(groupPositions);
+
+    allGroups.forEach(groupName => {
+        const groupOption = document.createElement('div');
+        groupOption.className = 'group-option';
+        
+        // Check if this group is already assigned to another position
+        const isAssigned = assignedGroups.includes(groupName) && 
+                          groupPositions[selectedPositionIndex] !== groupName;
+        
+        if (isAssigned) {
+            groupOption.classList.add('disabled');
+            groupOption.textContent = `${groupName} (đã chọn)`;
+        } else {
+            groupOption.textContent = groupName;
+            groupOption.onclick = () => assignGroupToPosition(groupName);
+        }
+
+        groupSelector.appendChild(groupOption);
+    });
+
+    // Add option to clear position
+    if (groupPositions[selectedPositionIndex]) {
+        const clearOption = document.createElement('div');
+        clearOption.className = 'group-option';
+        clearOption.style.background = '#e53e3e';
+        clearOption.textContent = '❌ Xóa';
+        clearOption.onclick = () => assignGroupToPosition(null);
+        groupSelector.appendChild(clearOption);
+    }
+}
+
+function assignGroupToPosition(groupName) {
+    if (groupName) {
+        groupPositions[selectedPositionIndex] = groupName;
+    } else {
+        delete groupPositions[selectedPositionIndex];
+    }
+    
+    // Hide group selector and refresh position grid
+    document.getElementById('groupSelectorContainer').style.display = 'none';
+    loadPositionGrid();
+    selectedPositionIndex = null;
+}
+
+function resetPositions() {
+    if (confirm('Bạn có chắc muốn đặt lại tất cả vị trí về mặc định?')) {
+        groupPositions = {
+            '0': 'Yêu Thương',
+            '1': 'Vui Mừng',
+            '2': 'Bình An',
+            '3': 'Nhịn Nhục',
+            '4': 'Nhân Từ',
+            '5': 'Hiền Lành',
+            '6': 'Trung Tín',
+            '7': 'Mềm Mại'
+        };
+        loadPositionGrid();
+        document.getElementById('groupSelectorContainer').style.display = 'none';
     }
 }
 
@@ -196,19 +395,24 @@ function loadGroupsGrid() {
     const groupsGrid = document.getElementById('groupsGrid');
     groupsGrid.innerHTML = '';
 
-    Object.keys(groupedStudents).forEach(groupName => {
-        const groupCard = document.createElement('div');
-        groupCard.className = 'group-card';
-        groupCard.onclick = () => selectGroup(groupName);
+    // Create grid based on groupPositions order
+    for (let i = 0; i < 8; i++) {
+        const groupName = groupPositions[i];
+        
+        if (groupName && groupedStudents[groupName]) {
+            const groupCard = document.createElement('div');
+            groupCard.className = 'group-card';
+            groupCard.onclick = () => selectGroup(groupName);
 
-        const studentCount = groupedStudents[groupName].length;
-        groupCard.innerHTML = `
-                    <h3>${groupName}</h3>
-                    <div class="student-count">${studentCount} học sinh</div>
-                `;
+            const studentCount = groupedStudents[groupName].length;
+            groupCard.innerHTML = `
+                        <h3>${groupName}</h3>
+                        <div class="student-count">${studentCount} học sinh</div>
+                    `;
 
-        groupsGrid.appendChild(groupCard);
-    });
+            groupsGrid.appendChild(groupCard);
+        }
+    }
 
     setViewportHeight();
     window.scrollTo(0, 0);
